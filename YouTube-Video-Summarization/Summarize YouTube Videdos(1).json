@@ -1,0 +1,262 @@
+{
+  "name": "Summarize YouTube Videos",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "**Summarize YouTube videos**\n\nThis project automates the summarization of YouTube videos, transforming lengthy content into concise, actionable insights. By leveraging AI and workflow automation, it extracts video transcripts, analyzes key points, and generates summaries, saving time for content creators, researchers, and professionals. Perfect for staying informed, conducting research, or repurposing video content efficiently.",
+        "height": 120,
+        "width": 1160,
+        "color": 7
+      },
+      "id": "58c77fdc-a08d-4a51-8604-f48f805be61b",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Add the full YouTube URL. ☝️\nYou can change this input to a webhook or anything else.",
+        "height": 80,
+        "width": 230
+      },
+      "id": "e5d29845-471a-49bf-90b3-bc4ca616bbd9",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -16,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/pintostudio~youtube-transcript-scraper/run-sync-get-dataset-items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "apify_api_key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"videoUrl\": \"{{ $json['Full URL'] }}\"\n}",
+        "options": {}
+      },
+      "id": "cbb8d370-fc89-4284-81a0-58c3ffd64022",
+      "name": "Request YouTube Transcript",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        320,
+        240
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "content": "Once you follow the Setup Instructions (mentioned in the template page description), you can insert the full URL endpoint, which includes both the POST Endpoint and API Key. 👇",
+        "height": 340,
+        "width": 280,
+        "color": 3
+      },
+      "id": "37331bfa-df3e-46f1-8925-88504e72ee9a",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        144
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "60104670-2d14-4839-a2ab-7a39ceedca12",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1072,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chunkSize": 100,
+        "chunkOverlap": 20,
+        "options": {}
+      },
+      "id": "4112c838-b2fe-4393-996d-db007bd1902f",
+      "name": "Summarization of a YouTube script",
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "position": [
+        752,
+        240
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "formTitle": "Summarize YouTube video's",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full URL"
+            }
+          ]
+        },
+        "options": {
+          "path": "6b6d1574-ae7e-40a0-9a89-c9dc8782560a"
+        }
+      },
+      "id": "d67981e8-29d5-4d74-a314-aa5390ed1b52",
+      "name": "YouTube video URL",
+      "type": "n8n-nodes-base.formTrigger",
+      "position": [
+        112,
+        240
+      ],
+      "webhookId": "6b6d1574-ae7e-40a0-9a89-c9dc8782560a",
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "content": "☝️ Optional\nIf the workflow ends here, Consider checking with another enrichment service.",
+        "height": 100,
+        "color": 4
+      },
+      "id": "fd733ad5-f42f-4732-bebc-355637640db6",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        368
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "The summarization node works automatically and professionally, recognizing the input text and processing it directly without requiring any enhancements from your side👇",
+        "width": 280,
+        "color": 5
+      },
+      "id": "94085f38-1d86-49c4-9850-bd65c4def20d",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        144
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json.data || [];\n\nconst transcript = data\n  .map(item => item.text || \"\")\n  .join(\" \");\n\nconst shortTranscript = transcript\n  .split(\" \")\n  .slice(0, 300)\n  .join(\" \");\n\nreturn [\n  {\n    json: {\n      text: shortTranscript\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        240
+      ],
+      "id": "d61cfb7b-e534-4fa2-a38d-55a68b73edc6",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        752,
+        400
+      ],
+      "id": "5cf1c7b8-2acb-4a76-afce-546d322902b7",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "btCcQcobtQ194eWD",
+          "name": "Groq account 87"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "YouTube video URL": {
+      "main": [
+        [
+          {
+            "node": "Request YouTube Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request YouTube Transcript": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization of a YouTube script": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Summarization of a YouTube script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization of a YouTube script",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "64579769-42dc-4676-85a7-0650d8456ec1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "792006ef7a7ebc36fc5abd99bf921da5e1552f75133b4eebce244bda1ddbd0bd"
+  },
+  "id": "DHBmbfwBJEXbaMI3",
+  "tags": []
+}
