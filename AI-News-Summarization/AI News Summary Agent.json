@@ -1,0 +1,246 @@
+{
+  "name": "AI News Summary Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://www.theverge.com/rss/index.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        400
+      ],
+      "id": "1e396bc3-32c1-461c-aab9-d6a14f43d150",
+      "name": "Get Tech News"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Reads the news",
+        "url": "=https://feeds.bbci.co.uk/news/world/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        -448,
+        400
+      ],
+      "id": "6ab2f0b2-8cf0-4912-9008-06813bfa3443",
+      "name": "Get World News"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Provide a summary of world and tech news from the last 24 hours. \n\n- Use the headings \"World News\" and \"Tech News.\" \n- Exclude comments, insights, and any news that is considered sad or distressing. \n- Include up to 10 concise bullet points, prioritizing major events and developments. \n- Focus on key developments from credible sources.\n- Consider today to be {{ $today }}. ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -688,
+        144
+      ],
+      "id": "5b653f17-f550-44b0-8b77-a7b49457f7df",
+      "name": "AI Summary Agent",
+      "notesInFlow": true,
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {
+        "content": "✅ This demo workflow is ready to use\n✨ We gave you free OpenAI credits to play with",
+        "height": 256,
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1216,
+        64
+      ],
+      "id": "4ae89089-001c-4898-a2a5-f1ddd0794267",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "sendTo": "hafizmezan17@gmail.com",
+        "subject": "Your news daily summary",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        144
+      ],
+      "id": "9c38a92e-59e5-4258-b3d2-74480a1eef0d",
+      "name": "Send summary with Gmail",
+      "webhookId": "e0c46fef-51f3-4a8d-8aaf-b6e17ea89346",
+      "notesInFlow": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QA9aZSIiK7tZb4H5",
+          "name": "Gmail OAuth2 API"
+        }
+      },
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {
+        "content": "### ✨ Bonus step \nSend the news summary via email. Open the node and connect your Gmail account [(= new credential)](https://www.youtube.com/shorts/2K6ltfI4YRg)",
+        "height": 96,
+        "width": 384,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "dc88f632-88fd-44dd-a44a-282717cbca9a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85b5c530-2c13-4424-ab83-05979bc879a5",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        144
+      ],
+      "id": "626ae402-62c6-43ae-b342-d0f0674186b1",
+      "name": "Output (News summary)",
+      "notesInFlow": true,
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        144
+      ],
+      "id": "3ca338b2-114f-4d56-8777-8afe2ee6a712",
+      "name": "Workflow trigger"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        400
+      ],
+      "id": "07679dc6-8a0b-4694-8191-d0aa1bfaf4f3",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rbFdzWnSwX7GFNg5",
+          "name": "Google Gemini(PaLM) Api account 146"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Tech News": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get World News": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Summary Agent": {
+      "main": [
+        [
+          {
+            "node": "Output (News summary)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output (News summary)": {
+      "main": [
+        [
+          {
+            "node": "Send summary with Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "77f70cd8-e406-445f-a6f2-f6a4e2ee4ebb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "792006ef7a7ebc36fc5abd99bf921da5e1552f75133b4eebce244bda1ddbd0bd"
+  },
+  "id": "5ZGjJDcbRcd50ZX1",
+  "tags": []
+}
